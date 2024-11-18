@@ -9,7 +9,6 @@ from django.http import HttpResponse
 
 class GenerateHTMLReportView(APIView):
     def post(self, request):
-        print(request.data)
         task = generate_html_report.delay(request.data)
         return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)
 
@@ -17,7 +16,7 @@ class GenerateHTMLReportView(APIView):
 class GetHTMLReportView(APIView):
     def get(self, request, task_id):
         report = get_object_or_404(Report, task_id=task_id)
-        return Response({'html': report.html_content})
+        return HttpResponse(report.html_content, content_type='text/html')
 
 
 class GeneratePDFReportView(APIView):
