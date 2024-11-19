@@ -28,8 +28,8 @@ class GeneratePDFReportView(APIView):
 class GetPDFReportView(APIView):
     def get(self, request, task_id):
         report = get_object_or_404(Report, task_id=task_id)
-        response = HttpResponse(
-            report.pdf_content, content_type='application/pdf')
+        with open(report.pdf_content, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; \
             filename="report_{task_id}.pdf"'
         return response
