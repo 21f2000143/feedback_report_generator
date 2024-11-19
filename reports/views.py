@@ -15,8 +15,24 @@ class GenerateHTMLReportView(APIView):
 
 class GetHTMLReportView(APIView):
     def get(self, request, task_id):
-        report = get_object_or_404(Report, task_id=task_id)
-        return HttpResponse(report.html_content, content_type='text/html')
+        try:
+            # Get the task result using the task_id
+            task = generate_html_report.AsyncResult(task_id)
+            if task.status == 'success':
+                # Retrieve the report object if the task is successful
+                report = get_object_or_404(Report, task_id=task_id)
+                return HttpResponse(report.html_content,
+                                    content_type='text/html')
+            else:
+                # Return task status if not successful yet
+                return Response({'task_id': task_id, 'status': task.status,
+                                 'info': task.info},
+                                status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            # Handle exceptions and return error response
+            return Response({'task_id': task_id, 'status': 'error',
+                             'info': str(e)},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneratePDFReportView(APIView):
@@ -27,9 +43,21 @@ class GeneratePDFReportView(APIView):
 
 class GetPDFReportView(APIView):
     def get(self, request, task_id):
-        report = get_object_or_404(Report, task_id=task_id)
-        with open(report.pdf_content, 'rb') as f:
-            response = HttpResponse(f.read(), content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; \
-            filename="report_{task_id}.pdf"'
-        return response
+        try:
+            # Get the task result using the task_id
+            task = generate_pdf_report.AsyncResult(task_id)
+            if task.status == 'success':
+                # Retrieve the report object if the task is successful
+                report = get_object_or_404(Report, task_id=task_id)
+                return HttpResponse(report.pdf_content,
+                                    content_type='application/pdf')
+            else:
+                # Return task status if not successful yet
+                return Response({'task_id': task_id, 'status': task.status,
+                                 'info': task.info},
+                                status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            # Handle exceptions and return error response
+            return Response({'task_id': task_id, 'status': 'error',
+                             'info': str(e)},
+                            status=status.HTTP_400_BAD_REQUEST)
