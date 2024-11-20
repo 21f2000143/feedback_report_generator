@@ -79,7 +79,7 @@
 - **Description:** Returns HTML content if completed else json response with task status.
 - **Examples:**
 - **Status:** SUCCESS.
-![Report generation process](docs/htmlresult.png)
+  <img src="docs/htmlresult.png" width="300" height="100" />
 - **Status:** PENDING.
     ```json
     {
@@ -130,7 +130,7 @@
 - **Description:** downloads PDF file if completed else json response with task status.
 - **Examples:**
 - **Status:** SUCCESS.
-![Report generation process](docs/htmlresult.png)
+  <img src="docs/pdfresult.png" width="300" height="100" />
 - **Status:** PENDING.
     ```json
     {
