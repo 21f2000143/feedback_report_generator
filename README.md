@@ -20,7 +20,8 @@
    cd feedback_report_generator
    ```
 
-2. **Start Docker Desktop on your machine**
+2. **Setup and Start Docker Desktop on your machine**
+[https://docs.docker.com/](https://docs.docker.com/)
 
 3. **Run the application**
    ```sh
@@ -149,9 +150,9 @@
 
 ## Assumptions and Design Decisions
 
-- Efficient schema design for storing large HTML and PDF content.
-- Followed REST principles in API design.
-- Proper error handling and task retries configured.
+- Efficient schema design for storing large HTML and PDF content. We are are okay with the default TOAST feature of Postgresql and Storing pdf files in the server file system.
+- Proper error handling and task retries configured from default(3) to (2) assuming we are dealing with large files.
+- For testing the api please use testing client which supports binary data(pdf) download or execute this url `/assignment/pdf/<task_id>` in browser.
 
 ---
 

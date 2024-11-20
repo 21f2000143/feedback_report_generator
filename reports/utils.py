@@ -17,9 +17,9 @@ def generate_report_card(filename, summary):
     folder = 'assignments'
     if not os.path.exists(folder):
         os.makedirs(folder)
-    pdf_path = os.path.join(folder, filename)
+    pdf_content = os.path.join(folder, filename)
     pdf = SimpleDocTemplate(
-        pdf_path, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30,
+        pdf_content, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30,
         bottomMargin=30)
 
     # Set up styles
@@ -66,4 +66,4 @@ def generate_report_card(filename, summary):
     # If content is too long, additional pages will be created automatically
     pdf.build(elements)
 
-    return pdf_path
+    return pdf_content
