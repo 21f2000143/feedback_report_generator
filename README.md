@@ -1,6 +1,6 @@
 # Feedback Report Generator
 
-## Setup
+## Setup & Run
 
 ### Stack Requirements
 - **Backend Framework:** Django with Django Rest Framework(DRF)
@@ -27,8 +27,8 @@
    docker-compose up --build
    ```
 
-4. **Access the application**
-   Open your web browser and navigate to [http://localhost:8000](http://localhost:8000)
+4. **Base URL of the API**
+   [http://localhost:8000](http://localhost:8000)
 
 5. **Access the flower monitor**
    Open your web browser and navigate to [http://localhost:5555](http://localhost:5555)
@@ -36,6 +36,10 @@
 6. **Stop the application**
    ```sh
    docker-compose down
+   ```
+7. **To start the application if you have already build it**
+   ```sh
+   docker-compose up
    ```
 
 ## Endpoints
@@ -45,7 +49,7 @@
 - **URL:** `/assignment/html`
 - **Method:** `POST`
 - **Description:** Accepts JSON payload and returns a task_id for processing.
-- **Payload Example:**
+- **Payload Example:** Input
     ```json
     [
       {
@@ -60,20 +64,43 @@
         ]
       }
     ]
+    ```
+- **Response:** Output
+    ```json
+    {
+      "task_id": "a8646b3b-96db-4239-9298-51589c6d7340"
+    }
     ```
 
 ### Check HTML Task Status and Retrieve Report
 
 - **URL:** `/assignment/html/<task_id>`
 - **Method:** `GET`
-- **Description:** Returns task status and HTML content if completed.
-
+- **Description:** Returns HTML content if completed else json response with task status.
+- **Examples:**
+- **Status:** SUCCESS.
+![Report generation process](docs/htmlresult.png)
+- **Status:** PENDING.
+    ```json
+    {
+      "task_id": "4eb51705-5b30-4fc3-a81b-8d8eaeca2117",
+      "status": "PENDING"
+    }
+    ```
+- **Status:** FAILURE.
+    ```json
+    {
+      "task_id": "dd907d57-9a7a-4c46-84a6-05b2e231b893",
+      "status": "FAILURE",
+      "error": "division by zero"
+    }
+    ```
 ### Generate PDF Report
 
 - **URL:** `/assignment/pdf`
 - **Method:** `POST`
 - **Description:** Accepts JSON payload and returns a task_id for processing.
-- **Payload Example:**
+- **Payload Example:** Input
     ```json
     [
       {
@@ -89,12 +116,36 @@
       }
     ]
     ```
+- **Response:** Output
+    ```json
+    {
+      "task_id": "a8646b3b-96db-4239-9298-51589c6d7340"
+    }
+    ```
 
 ### Check PDF Task Status and Retrieve Report
 
 - **URL:** `/assignment/pdf/<task_id>`
 - **Method:** `GET`
-- **Description:** Returns task status and PDF file if completed.
+- **Description:** downloads PDF file if completed else json response with task status.
+- **Examples:**
+- **Status:** SUCCESS.
+![Report generation process](docs/htmlresult.png)
+- **Status:** PENDING.
+    ```json
+    {
+      "task_id": "4eb51705-5b30-4fc3-a81b-8d8eaeca2117",
+      "status": "PENDING"
+    }
+    ```
+- **Status:** FAILURE.
+    ```json
+    {
+      "task_id": "dd907d57-9a7a-4c46-84a6-05b2e231b893",
+      "status": "FAILURE",
+      "error": "division by zero"
+    }
+    ```
 
 ## Assumptions and Design Decisions
 

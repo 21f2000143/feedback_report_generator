@@ -25,7 +25,6 @@ def generate_html_report(data):
         event_order = get_event_sorted_alis(each['events'])
         dic_obj['event_order'] = event_order
         context.append(dic_obj)
-
     # Wrap the list in a dictionary for the template
     full_context = {'full_context': context}
     html_report = render_to_string('feedback_report_generator/report.html',
@@ -46,6 +45,8 @@ def generate_pdf_report(data):
         dic_obj['event_order'] = event_order
         summary.append(dic_obj)
     # Generate PDF report card using the summary with unique task ID
+    while True:
+        pass
     pdf_file_link = generate_report_card(
         f'report_{generate_pdf_report.request.id}.pdf', summary)
     # Save the report
