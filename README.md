@@ -80,7 +80,13 @@
 - **Description:** Returns HTML content if completed else json response with task status.
 - **Examples:**
 - **Status:** SUCCESS.
-  <img src="docs/htmlresult.png" width="300" height="100" />
+    ```json
+    {
+      "task_id": "6d2552c6-55d8-4562-92eb-c996a2ebbfed",
+      "status": "SUCCESS",
+      "html_content": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Assignment Report</title>\n</head>\n\n<body>\n    <div id=\"reports\">\n        \n        <div>\n            <h2>Student ID: 00a9a76518624b02b0ed57263606fc26</h2>\n            <p>Event Order: Q1</p>\n        </div>\n        \n    </div>\n</body>\n\n</html>\n"
+    }
+    ```
 - **Status:** PENDING.
     ```json
     {
