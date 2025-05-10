@@ -26,8 +26,12 @@ def generate_html_report(data):
         context.append(dic_obj)
     # Wrap the list in a dictionary for the template
     full_context = {'full_context': context}
-    html_report = render_to_string('feedback_report_generator/report.html',
-                                   context=full_context)
+    # Generate HTML directly without template file
+    html_report = f"""
+        <body>
+            {full_context}
+        </body>
+    """
     report = Report.objects.create(
         task_id=generate_html_report.request.id, html_content=html_report)
     return report.id
