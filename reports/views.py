@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .tasks import generate_html_report, generate_pdf_report
 from rest_framework import permissions
-from uuid import uuid4
 from rest_framework import generics
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view
@@ -12,6 +11,7 @@ from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 import os
+from config.celery import app
 from .validation import validate_payload
 
 from reports.models import (
@@ -66,14 +66,12 @@ class GenerateReportView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         validated = serializer.validated_data
 
-        task_id = str(uuid4())
-
         if self.report_type == 'html':
-            generate_html_report.delay(validated)
+            task = generate_html_report.delay(validated)
         elif self.report_type == 'pdf':
-            generate_pdf_report.delay(validated)
+            task = generate_pdf_report.delay(validated)
 
-        return Response({"task_id": task_id}, status=status.HTTP_202_ACCEPTED)
+        return Response({"task_id": task.id}, status=status.HTTP_202_ACCEPTED)
 
 
 class GetReportView(APIView):
@@ -84,8 +82,10 @@ class GetReportView(APIView):
     def get(self, request, task_id, format=None):
         if self.report_type == 'html':
             try:
+                print(task_id)
                 # Get the task result using the task_id
-                task = generate_html_report.AsyncResult(task_id)
+                task = generate_html_report.AsyncResult(task_id, app=app)
+                print(task.status)
                 if task.status == 'SUCCESS':
                     # Retrieve the report object if the task is successful
                     report = get_object_or_404(Report, task_id=task_id)
@@ -116,7 +116,7 @@ class GetReportView(APIView):
         elif self.report_type == 'pdf':
             try:
                 # Get the task result using the task_id
-                task = generate_pdf_report.AsyncResult(task_id)
+                task = generate_pdf_report.AsyncResult(task_id, app=app)
                 if task.status == 'SUCCESS':
                     # Retrieve the report object if the task is successful
                     report = get_object_or_404(Report, task_id=task_id)
