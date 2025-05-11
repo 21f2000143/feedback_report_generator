@@ -4,7 +4,6 @@ from .utils import generate_report_card
 from celery.signals import task_success, task_failure
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-import time
 
 
 def get_event_sorted_alis(events):
@@ -62,7 +61,6 @@ def generate_html_report(data):
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True)
 def generate_pdf_report(data):
-    time.sleep(60)  # Simulate a long-running task
     # Parse events and prepare data
     summary = []
     for each in data:
