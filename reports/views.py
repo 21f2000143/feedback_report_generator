@@ -7,12 +7,9 @@ from rest_framework import generics
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view
 from reports.permissions import IsOwnerOrReadOnly
-from rest_framework import permissions
-from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 import os
 from config.celery import app
-from .validation import validate_payload
 
 from reports.models import (
     User,
@@ -120,10 +117,10 @@ class GetReportView(APIView):
                         file_path = report.pdf_content
                         if os.path.exists(file_path):
                             with open(file_path, 'rb') as fh:
-                                response = HttpResponse(fh.read(),
-                                                        content_type="application/pdf")
-                                response['Content-Disposition'] = 'attachment; filename=' + \
-                                    os.path.basename(file_path)
+                                response = HttpResponse(
+                                    fh.read(), content_type="application/pdf")
+                                response['Content-Disposition'] = 'attachment;\
+                                    filename=' + os.path.basename(file_path)
                                 return response
                         else:
                             return Response({

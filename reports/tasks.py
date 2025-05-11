@@ -1,6 +1,5 @@
 from celery import shared_task
 from .models import Report
-from django.template.loader import render_to_string
 from .utils import generate_report_card
 from celery.signals import task_postrun
 
@@ -16,7 +15,8 @@ def get_event_sorted_alis(events):
 
 
 @task_postrun.connect
-def task_postrun_handler(sender=None, task_id=None, task=None, args=None, kwargs=None, retval=None, state=None, **extras):
+def task_postrun_handler(sender=None, task_id=None, task=None, args=None,
+                         kwargs=None, retval=None, state=None, **extras):
     task_id = task_id
     report = Report.objects.filter(task_id=task_id).first()
     if report:
@@ -26,7 +26,7 @@ def task_postrun_handler(sender=None, task_id=None, task=None, args=None, kwargs
         report.save()
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def generate_html_report(data):
     # Parse events
     try:
@@ -57,7 +57,7 @@ def generate_html_report(data):
         return error_message
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def generate_pdf_report(data):
     try:
         # Parse events and prepare data

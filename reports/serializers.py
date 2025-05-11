@@ -48,31 +48,3 @@ class InputSerializer(serializers.Serializer):
     namespace = serializers.CharField()
     student_id = serializers.CharField()
     events = EventSerializer(many=True)
-
-
-class HtmlSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Report
-        fields = ['task_id', 'html_content']
-
-
-class CreateHtmlSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Report
-        fields = ['task_id', 'html_content']
-
-
-class PdfSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Report
-        fields = ['task_id', 'pdf_content']
-
-
-class CreatePdfSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Report
-        fields = ['task_id', 'pdf_content']
