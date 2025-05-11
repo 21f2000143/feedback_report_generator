@@ -80,29 +80,27 @@ class GetReportView(APIView):
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get(self, request, task_id, format=None):
+        report = Report.objects.filter(task_id=task_id).first()
         if self.report_type == 'html':
             try:
-                print(task_id)
-                # Get the task result using the task_id
-                task = generate_html_report.AsyncResult(task_id, app=app)
-                print(task.status)
-                if task.status == 'SUCCESS':
-                    # Retrieve the report object if the task is successful
-                    report = get_object_or_404(Report, task_id=task_id)
-                    return Response({
-                        'task_id': task_id,
-                        'status': task.status,
-                        'html_content': report.html_content
-                    }, status=status.HTTP_200_OK)
-                elif task.status == 'FAILURE':
-                    # Get the exception without propagating it
-                    error_reason = task.get(propagate=False)
-                    return Response({
-                        'task_id': task_id,
-                        'status': task.status,
-                        'error': str(error_reason)
-                    }, status=status.HTTP_202_ACCEPTED)
+                if report:
+                    # If the report exists, return the HTML content
+                    if report.status == 'SUCCESS':
+                        return Response({
+                            'task_id': task_id,
+                            'status': report.status,
+                            'html_content': report.html_content
+                        }, status=status.HTTP_200_OK)
+                    elif report.status == 'FAILURE':
+                        # If the report failed, return the error message
+                        return Response({
+                            'task_id': task_id,
+                            'status': report.status,
+                            'error': report.error
+                        }, status=status.HTTP_202_ACCEPTED)
                 else:
+                    # Get the task result using the task_id
+                    task = generate_html_report.AsyncResult(task_id)
                     # For states like PENDING or STARTED
                     return Response({
                         'task_id': task_id,
@@ -115,36 +113,34 @@ class GetReportView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
         elif self.report_type == 'pdf':
             try:
-                # Get the task result using the task_id
-                task = generate_pdf_report.AsyncResult(task_id, app=app)
-                if task.status == 'SUCCESS':
-                    # Retrieve the report object if the task is successful
-                    report = get_object_or_404(Report, task_id=task_id)
-                    file_path = report.pdf_content
-                    if os.path.exists(file_path):
-                        with open(file_path, 'rb') as fh:
-                            response = HttpResponse(fh.read(),
-                                                    content_type="application/pdf")
-                            response['Content-Disposition'] = 'attachment; filename=' + \
-                                os.path.basename(file_path)
-                            return response
-
-                    # If the file does not exist, return the status of the task
-                    return Response({
-                        'task_id': task_id,
-                        'status': task.status
-                    }, status=status.HTTP_202_ACCEPTED)
-                elif task.status == 'FAILURE':
-                    # Get the exception without propagating it
-                    # Fetch the exception instance
-                    error_reason = task.get(propagate=False)
-                    return Response({
-                        'task_id': task_id,
-                        'status': task.status,
-                        # Convert exception to string for JSON
-                        'error': str(error_reason)
-                    }, status=status.HTTP_202_ACCEPTED)
+                # Check if the report exists
+                if report:
+                    # If the report exists, return the PDF content
+                    if report.status == 'SUCCESS':
+                        file_path = report.pdf_content
+                        if os.path.exists(file_path):
+                            with open(file_path, 'rb') as fh:
+                                response = HttpResponse(fh.read(),
+                                                        content_type="application/pdf")
+                                response['Content-Disposition'] = 'attachment; filename=' + \
+                                    os.path.basename(file_path)
+                                return response
+                        else:
+                            return Response({
+                                'task_id': task_id,
+                                'status': report.status,
+                                'error': 'File not found'
+                            }, status=status.HTTP_404_NOT_FOUND)
+                    elif report.status == 'FAILURE':
+                        # If the report failed, return the error message
+                        return Response({
+                            'task_id': task_id,
+                            'status': report.status,
+                            'error': report.error
+                        }, status=status.HTTP_202_ACCEPTED)
                 else:
+                    # Get the task result using the task_id
+                    task = generate_pdf_report.AsyncResult(task_id, app=app)
                     # For states like PENDING or STARTED
                     return Response({
                         'task_id': task_id,

@@ -152,7 +152,6 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND",
                                        "redis://localhost:6379/1")
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_RESULT_EXPIRES = 3600  # 1 hour (default is 1 day)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
