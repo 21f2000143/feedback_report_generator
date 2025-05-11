@@ -2,6 +2,8 @@ from celery import shared_task
 from .models import Report
 from .utils import generate_report_card
 from celery.signals import task_postrun
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 
 def get_event_sorted_alis(events):
@@ -40,11 +42,7 @@ def generate_html_report(data):
         # Wrap the list in a dictionary for the template
         full_context = {'full_context': context}
         # Generate HTML directly without template file
-        html_report = f"""
-            <body>
-                {full_context}
-            </body>
-        """
+        html_report = mark_safe(render_to_string('report.html', full_context))
         report = Report.objects.create(
             task_id=generate_html_report.request.id, html_content=html_report)
         return report.id
