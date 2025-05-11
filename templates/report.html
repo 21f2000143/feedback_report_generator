@@ -1,0 +1,20 @@
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Event Order</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for feedback in full_context %}
+      <tr>
+        <td>{{ feedback.student_id }}</td>
+        <td>{{ feedback.event_order }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+
+</html>
