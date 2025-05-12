@@ -20,7 +20,7 @@ from reports.serializers import (
     UserSerializer,
     AdminRegisterSerializer,
     StudentRegisterSerializer,
-    InputSerializer
+    InputSerializer,
 )
 
 
@@ -28,6 +28,14 @@ from reports.serializers import (
 def api_root(request, format=None):
     return Response({
         'users': reverse('user-list', request=request, format=format),
+        'register-admin': reverse('admin-register', request=request,
+                                  format=format),
+        'register-student': reverse('student-register', request=request,
+                                    format=format),
+        'generate-html-report': reverse('generate-html-report',
+                                        request=request, format=format),
+        'generate-pdf-report': reverse('generate-pdf-report',
+                                       request=request, format=format),
     })
 
 
@@ -36,7 +44,7 @@ class UserList(generics.ListAPIView):
     serializer_class = UserSerializer
 
 
-class AdminRegisterAPIView(generics.CreateAPIView):
+class AdminRegisterAPIView(generics.ListCreateAPIView):
     queryset = User.objects.filter(role='admin')
     serializer_class = AdminRegisterSerializer
 
@@ -44,7 +52,7 @@ class AdminRegisterAPIView(generics.CreateAPIView):
         serializer.save()
 
 
-class StudentRegisterAPIView(generics.CreateAPIView):
+class StudentRegisterAPIView(generics.ListCreateAPIView):
     queryset = User.objects.filter(role='student')
     serializer_class = StudentRegisterSerializer
 
