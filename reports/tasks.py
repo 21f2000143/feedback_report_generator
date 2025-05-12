@@ -19,6 +19,8 @@ def get_event_sorted_alis(events):
 @task_success.connect
 def task_success_handler(sender=None, result=None, **kwargs):
     task_id = sender.request.id
+    print("Jyotirmay")
+    print(result)
     if result['type'] == 'pdf':
         # Save the PDF report
         Report.objects.create(
@@ -29,7 +31,7 @@ def task_success_handler(sender=None, result=None, **kwargs):
         Report.objects.create(
             task_id=task_id,
             status="SUCCESS",
-            html_content=result['html_content'])
+            html_content=result['html_report'])
 
 
 @task_failure.connect
