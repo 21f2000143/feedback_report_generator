@@ -5,9 +5,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
     path('', views.api_root),
     #     Below three paths are for user stuff
-    path("user/", views.UserList.as_view(), name='user-list'),
-    path("register-admin/", views.AdminRegisterAPIView.as_view()),
-    path("register-student/", views.StudentRegisterAPIView.as_view()),
+    path("users", views.UserList.as_view(), name='user-list'),
+    path("register-admin", views.AdminRegisterAPIView.as_view()),
+    path("register-student", views.StudentRegisterAPIView.as_view()),
     #     Main api endpoints which are required for the assignment
     path('assignment/html', views.GenerateReportView.as_view(
       report_type='html'),

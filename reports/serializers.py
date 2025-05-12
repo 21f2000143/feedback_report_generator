@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from reports.models import (
     User,
-    Report
 )
 
 
